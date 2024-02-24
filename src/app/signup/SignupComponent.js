@@ -9,6 +9,7 @@ const UserSignup = () => {
     name: '',
     email: '',
     password: '',
+    phoneNumber:''
   });
   const router = useRouter()
 
@@ -66,6 +67,15 @@ const UserSignup = () => {
           <input
             type="email"
             name="email"
+            onChange={handleInputChange}
+            className="w-full border p-2 rounded focus:outline-none focus:border-blue-500"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-semibold">phoneNumber:</label>
+          <input
+            type="text"
+            name="phoneNumber"
             onChange={handleInputChange}
             className="w-full border p-2 rounded focus:outline-none focus:border-blue-500"
           />
