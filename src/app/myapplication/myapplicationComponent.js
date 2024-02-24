@@ -62,7 +62,7 @@ const ApplicationComponent = () => {
   
   const ApplicationCard = ({ application }) => {
     const trackerArray = Array.from({ length: application.currentStage.order }, (_, index) => index);
-  
+    trackerArray.pop()
     return (
       <tr className="shadow-md border-2 p-3">
         <td className="py-2 px-4">
@@ -77,8 +77,12 @@ const ApplicationComponent = () => {
         <td className="py-2 px-4">
           <div className="flex gap-5">
             {trackerArray.map((i, index) => (
+
+              
               <div key={index} className="bg-green-500 w-3 h-3 rounded-full mx-1"></div>
             ))}
+
+            {application.status =='rejected' ?<div className="bg-red-500 w-3 h-3 rounded-full mx-1"></div>:<div  className="bg-green-500 w-3 h-3 rounded-full mx-1"></div>}
           </div>
         </td>
       </tr>
