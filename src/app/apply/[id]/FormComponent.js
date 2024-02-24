@@ -32,7 +32,7 @@ const FileUploadComponent = () => {
       const fileLocation = response.data.location;
 
       // Call the API to submit the application
-     let responseApplication =  await axiosInstance.post('/api/applications', {
+     let responseApplication =  await axiosInstance.post(`/api/applications?userId=${userId}`, {
         userId: userId,
         document: fileLocation,
         application_typeId: applicationTypeId,

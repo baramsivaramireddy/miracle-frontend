@@ -3,6 +3,7 @@
 import useAuth, { useToken } from "@/hooks/useAuth";
 import getRoleFromToken from "@/utils/getRole";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 const Layout = ({ children }) => {
   return (
     <>
@@ -66,6 +67,8 @@ const SecondaryNav = () => {
 const UserNav = () => {
   const token = useToken();
   const { logout } = useAuth();
+   let router = useRouter()
+
   if (!token) {
     return (
       <div className="flex space-x-4">
@@ -84,7 +87,7 @@ const UserNav = () => {
 
   let presentUser = getRoleFromToken(token);
 
-  console.log(presentUser);
+
   if (presentUser == "user") {
     return (
       <div className="flex items-center gap-2">
@@ -94,6 +97,8 @@ const UserNav = () => {
         <button
           onClick={() => {
             logout();
+            router.push('/')
+            
           }}
           className="text-black bg-white border border-black hover:bg-gray-300 hover:text-black px-3 py-1 rounded"
         >

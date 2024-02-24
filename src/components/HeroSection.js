@@ -85,147 +85,117 @@ const HeroSection = () => {
   
 
 
+  const ApplicationComponent = ({ roles }) => {
+    const [applications, setApplications] = useState(null);
+    const token = useToken();
+    const userId = getUserIdFromToken(token);
+    const role = getRoleFromToken(token);
   
-
-const ApplicationComponent = ({roles}) =>{
-
-    const [applications,setApplications] = useState(null)
-    const token = useToken()
-    const userId = getUserIdFromToken(token)
-    const role = getRoleFromToken(token)
-
-
-    
-
-    const roled = roles.filter( (roledoc)  => roledoc.name == role)
- 
-    useEffect(()=>{
-
-
-        const fetchALLApplications = async () =>{
-
-            let response = await  axiosInstance.get(`/api/applications?roleId=${roled[0]._id}`)
-
-            if (response.status != 200){
-
-                toast.error('backend crashed ')
-            }
-
-            setApplications(response.data.data)
+    const roled = roles.filter((roledoc) => roledoc.name === role);
+  
+    useEffect(() => {
+      const fetchALLApplications = async () => {
+        try {
+          let response = await axiosInstance.get(`/api/applications?roleId=${roled[0]._id}`);
+  
+          if (response.status !== 200) {
+            toast.error('Backend crashed');
+          }
+  
+          setApplications(response.data.data);
+        } catch (error) {
+          console.error(error);
         }
-        fetchALLApplications()
-    },[])
-
-
-
+      };
+  
+      fetchALLApplications();
+    }, []);
+  
     return (
-
-        <>
-
-        <h1  className="text-2xl font-bold p-2">  Applications </h1>
-
-
-        <div className="flex flex-col gap-3 p-3" > 
-        { applications == null ? " applications loading": 
-        
-
-
-        
-        applications.map((a) =>{
-               return  <ApplicationCard application={a} />
-
-        })
-    
-
-    }
-
+      <>
+        <h1 className="text-2xl font-bold p-2">Applications</h1>
+  
+        <div className="overflow-x-auto">
+          <table className="min-w-full bg-white border border-gray-300">
+            <thead>
+              <tr>
+                <th className="py-2 px-4 border-b">User Name</th>
+                <th className="py-2 px-4 border-b">Application Type</th>
+                <th className="py-2 px-4 border-b">Download Document</th>
+                <th className="py-2 px-4 border-b">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {applications === null ? (
+                <tr>
+                  <td colSpan="4" className="p-4 text-center">
+                    Applications loading...
+                  </td>
+                </tr>
+              ) : (
+                applications.map((a) => <ApplicationCard key={a._id} application={a} />)
+              )}
+            </tbody>
+          </table>
         </div>
+      </>
+    );
+  };
+  
+  const ApplicationCard = (props) => {
+    const router = useRouter();
+  
+    const handleReject = async () => {
+      let response = await axiosInstance.put(`/api/applications/${props.application._id}`, {
+        status: 'rejected',
+      });
+      location.reload();
+      if (response.status === 201) {
+        toast.success('Application rejected');
        
-        </>
-    )
-}
-
-
-const ApplicationCard = (props)=> {
+      }
+    };
+  
+    const handleApprove = async () => {
+      let response = await axiosInstance.put(`/api/applications/${props.application._id}`, {
+        status: 'approved',
+      });
+  
+      location.reload();
+      if (response.status === 201) {
+        toast.success('Application approved');
+       
+      }
+    };
+  
+    return (
+      <tr className="shadow-md border-2 p-3 rounded">
+        <td className="py-2 px-4">{props.application.userId.name}</td>
+        <td className="py-2 px-4">{props.application.application_typeId.name}</td>
+        <td className="py-2 px-4">
+          <a className="underline text-blue-500" href={props.application.document}>
+            Click here to download
+          </a>
+        </td>
+        <td className="py-2 px-4">
+          <button
+            className="bg-green-500 hover:bg-green-700 p-2 rounded capitalize text-white font-semibold"
+            onClick={handleApprove}
+          >
+            Approve
+          </button>
+          <button
+            className="bg-red-500 hover:bg-red-700 p-2 rounded capitalize text-white font-semibold ml-2"
+            onClick={handleReject}
+          >
+            Reject
+          </button>
+        </td>
+      </tr>
+    );
+  };
+  
  
-  const router = useRouter()
-  const handleReject =  async () =>{
-  
-  let response =  await  axiosInstance.put(`/api/applications/${props.application._id}`,{status:'rejected'})
-
-  if (response.status == 201){
-
-    toast.success('updated ..')
-    router.refresh()
-  }
-  }
-
-  const handleApprove  = async () =>{
-
-   
-    let response =  await  axiosInstance.put(`/api/applications/${props.application._id}`,{status:'approved'})
-
-    if (response.status == 201){
-  
-      toast.success('updated ..')
-      router.refresh()
-    }
-
-  }
-    return (
-
-        <>
-
-        <div className="shadow-md border-2 p-3 rounded  flex justify-between gap-5  py-5">
-            {/* {application } */}
-
-        {/* <div>
-        {props.application._id}
-          
-        </div> */}
-
-
-        <div>
-        {props.application.userId.name}
-
-        </div>
-        <div>
-        {props.application.application_typeId.name}
-
-        </div>
-
-        <div>
-
-          <a  className="underline text-blue-500" href={props.application.document}> click here to download  </a>
-        </div>
-
-
-        <button className="bg-green-500 hover:bg-green-700 p-2 rounded capitalize text-white font-semibold " onClick={() =>{
-         
-
-         handleApprove()
-        }}>
-
-        approve
-        </button>
-
-        <button className="bg-red-500 hover:bg-red-700 p-2 rounded capitalize text-white font-semibold" onClick={() =>{
-         
-
-         handleReject()
-        }}>
-
-        reject
-        </button>
-        </div>
-
-       
-        </>
-    )
-}
-
-
-
 
 
 
